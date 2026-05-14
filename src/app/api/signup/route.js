@@ -19,6 +19,9 @@ export async function POST(request) {
     return NextResponse.json({ message: 'User created successfully', user: { id: user._id, name: user.name, email: user.email } }, { status: 201 });
   } catch (error) {
     console.error('Registration error:', error);
+    if (error.name === 'MongooseServerSelectionError') {
+      return NextResponse.json({ error: 'Database connection failed. Is MongoDB running?' }, { status: 500 });
+    }
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
   }
 }

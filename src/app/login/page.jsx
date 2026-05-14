@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from '@/lib/auth-client';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,16 +21,30 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
-    // For now, this is a mock login. In a real app, you'd call an API.
-    // We'll simulate a successful login to show the flow.
-    setTimeout(() => {
-      if (formData.email && formData.password) {
-        router.push('/');
+    try {
+      const { data, error } = await signIn.email({
+        email: formData.email,
+        password: formData.password,
+        callbackURL: "/profile"
+      });
+
+      if (error) {
+        setError(error.message || 'Login failed');
       } else {
-        setError('Please enter your credentials');
+        router.push('/profile');
       }
+    } catch (err) {
+      setError('Connection failed');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    await signIn.social({
+      provider: "google",
+      callbackURL: "/profile"
+    });
   };
 
   return (
@@ -103,13 +118,17 @@ export default function LoginPage() {
               <div className="flex-grow border-t border-outline-variant"></div>
             </div>
 
-            <button className="w-full border border-outline-variant py-4 flex items-center justify-center gap-3 font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" type="button">
+            <button 
+              onClick={handleGoogleLogin}
+              className="w-full border border-outline-variant py-4 flex items-center justify-center gap-3 font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200" 
+              type="button"
+            >
               <img 
                 alt="Google" 
                 className="w-5 h-5" 
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdpGVPbwWmjKeHfbfDCYxvyeOEUg4INFFjB7THRa17KuUYpMOtw-gn9ts9QcW1L4jsYRyxPiy9CCEAZ9SBkEnGTppq4QemlFL2gclZA59x-VUZv0xp3hsBpei04TZlLj6rVqjwj9RVPkBYMeU1w6qqHuzF8lE8fyOWr8i2qkl7Z90IF0X1ICrgC0leFJiDrKTZKD49WUSiGK-inGwSrCDmzMHDnNBxCfbDpoBYYt86KpDOOaGwFx5svLBZz0VUFsW2fgcSTZJcEAUt"
               />
-              Sign Up With Google
+              Sign In With Google
             </button>
 
             <p className="text-center font-hanken text-on-surface-variant">

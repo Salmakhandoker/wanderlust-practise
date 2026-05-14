@@ -1,41 +1,65 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from 'next/link';
+import { useSession } from '@/lib/auth-client';
 
 export default function ProfilePage() {
-  // Static state for now - could be fetched from an API / session later
-  const user = {
-    name: 'Sarah Mitchell',
-    location: 'San Francisco, CA',
-    memberSince: 'Mar 2024',
-    nationality: 'United States',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDy2_WDgfHcejgwr5OJhLBF6JcN6cmHuQGy4y--Ud-bAcqxm4SJAkEHktnXV2HJp0L5WDpevYG6p5_GdFjIGf3vfsQFPztO_-cHNtn7zb1g6OQxErQFmeW62sBRlTmKBTNlQGzwmmpppwymOi9QgTLybTOBN2cuBxyEFRmkJiTRjashhjdzZZO1K5ZOBfJTV5duN9Wkd3swpCk9TkCIVOIz5cZ6Y-7UpWTRiOc3kfqiuoSyJWlTJLXf0XriMUkf4M0g_ut7zvkA5I99',
-    stats: {
-      bookings: 12,
-      countries: 18,
-      upcoming: 2,
-      spent: 15750
-    },
-    activities: [
-      {
-        id: 1,
-        title: 'Paris, France Retreat',
-        status: 'Completed',
-        description: 'A 5-day luxurious stay at Hotel Plaza Athénée with exclusive river cruise.',
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuChrUXyzPZtSECZhsHwC5jFtEqTmghtKxxX5TLSClzbQP-kpP-AcJI7KB35chAdm--X4kQJm2mf8gStJ5mOTvdBPPQu0TN3SNG3AFbeo-hQCqD5WlyzBtJx7-9AXMwiiQAT0vBdZZ7H_QOWNP1EFBfSuGVtU2VtkKH5bl9rCD2yJvADJ0ZojqHpNnI06EOHpX-tjujZbYn0hrFOJ8HRAWP4x4BlQrgclqnJ4xtHkJkYADUkUH6dA8Q1xBJwWly7HHYvUsjRIT3S78CI'
-      },
-      {
-        id: 2,
-        title: 'Ubud, Bali Wellness Week',
-        status: 'Confirmed',
-        description: 'Wellness and yoga retreat focused on mindfulness and luxury spa experiences.',
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuApk1UEml3ZcwB7gjbZHYpsHgXmGdrvlhjx7XROUZWe3gRtKgP3nmyItmL4NGXtFxajN3AmvH9x82j081MrzyQ_0Ad-EeJgpEXlkXu533mToipWel8PsuPc_Vumcb0xDhFQu4hgz-MBcnCAzVE0REhjECAzw_H2c08pDAgIMiI7k3JNJ5fCqb2vCW5OfDUfKQbgGOzvqJUtB2QpYuUCxqNHFajNRVPV4QWuk4oN5iS9rHNQNMC4vAFmRl02hjaYNpT7NgeM6W2SUS2R'
-      }
-    ]
-  };
+  const { data: session, isPending } = useSession();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (session?.user) {
+      setUser({
+        name: session.user.name,
+        email: session.user.email,
+        image: session.user.image || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDy2_WDgfHcejgwr5OJhLBF6JcN6cmHuQGy4y--Ud-bAcqxm4SJAkEHktnXV2HJp0L5WDpevYG6p5_GdFjIGf3vfsQFPztO_-cHNtn7zb1g6OQxErQFmeW62sBRlTmKBTNlQGzwmmpppwymOi9QgTLybTOBN2cuBxyEFRmkJiTRjashhjdzZZO1K5ZOBfJTV5duN9Wkd3swpCk9TkCIVOIz5cZ6Y-7UpWTRiOc3kfqiuoSyJWlTJLXf0XriMUkf4M0g_ut7zvkA5I99',
+        location: 'United States',
+        memberSince: 'Mar 2024',
+        nationality: 'United States',
+        stats: {
+          bookings: 12,
+          countries: 18,
+          upcoming: 2,
+          spent: 15750
+        },
+        activities: [
+          {
+            id: 1,
+            title: 'Paris, France Retreat',
+            status: 'Completed',
+            description: 'A 5-day luxurious stay at Hotel Plaza Athénée with exclusive river cruise.',
+            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuChrUXyzPZtSECZhsHwC5jFtEqTmghtKxxX5TLSClzbQP-kpP-AcJI7KB35chAdm--X4kQJm2mf8gStJ5mOTvdBPPQu0TN3SNG3AFbeo-hQCqD5WlyzBtJx7-9AXMwiiQAT0vBdZZ7H_QOWNP1EFBfSuGVtU2VtkKH5bl9rCD2yJvADJ0ZojqHpNnI06EOHpX-tjujZbYn0hrFOJ8HRAWP4x4BlQrgclqnJ4xtHkJkYADUkUH6dA8Q1xBJwWly7HHYvUsjRIT3S78CI'
+          },
+          {
+            id: 2,
+            title: 'Ubud, Bali Wellness Week',
+            status: 'Confirmed',
+            description: 'Wellness and yoga retreat focused on mindfulness and luxury spa experiences.',
+            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuApk1UEml3ZcwB7gjbZHYpsHgXmGdrvlhjx7XROUZWe3gRtKgP3nmyItmL4NGXtFxajN3AmvH9x82j081MrzyQ_0Ad-EeJgpEXlkXu533mToipWel8PsuPc_Vumcb0xDhFQu4hgz-MBcnCAzVE0REhjECAzw_H2c08pDAgIMiI7k3JNJ5fCqb2vCW5OfDUfKQbgGOzvqJUtB2QpYuUCxqNHFajNRVPV4QWuk4oN5iS9rHNQNMC4vAFmRl02hjaYNpT7NgeM6W2SUS2R'
+          }
+        ]
+      });
+    }
+  }, [session]);
+
+  if (isPending) return (
+    <div className="min-h-screen bg-surface flex items-center justify-center">
+      <div className="font-literata text-4xl text-primary animate-pulse">Verifying Session...</div>
+    </div>
+  );
+
+  if (!session) return (
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-6">
+      <h1 className="font-literata text-4xl text-on-surface">Secure Access Required</h1>
+      <p className="text-on-surface-variant font-hanken">Please sign in to view your travel dashboard.</p>
+      <Link href="/login" className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold hover:bg-primary-container transition-all">Sign In to Wanderlast</Link>
+    </div>
+  );
+
+  if (!user) return null;
 
   return (
     <div className="bg-surface text-on-surface font-hanken min-h-screen antialiased">
@@ -44,7 +68,7 @@ export default function ProfilePage() {
       <main>
         {/* Header Section */}
         <section className="max-w-[1440px] mx-auto px-grid-margin pt-16 pb-8">
-          <h1 className="font-literata text-7xl text-on-surface mb-2">My Profile</h1>
+          <h1 className="font-literata text-7xl text-on-surface mb-2">Welcome, {user.name?.split(' ')[0]}</h1>
           <p className="font-hanken text-lg text-on-surface-variant max-w-2xl">Manage your account settings and travel preferences.</p>
         </section>
 
